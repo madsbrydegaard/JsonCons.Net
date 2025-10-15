@@ -1,4 +1,4 @@
-﻿        
+﻿
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -65,12 +65,12 @@ namespace JsonCons.JmesPath
         int System.Collections.IComparer.Compare(Object x, Object y)
         {
             return this.Compare((IValue)x, (IValue)y);
-        }        
+        }
     }
 
-    interface IFunction 
+    interface IFunction
     {
-        int? Arity {get;}
+        int? Arity { get; }
         bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue element);
     };
 
@@ -81,10 +81,10 @@ namespace JsonCons.JmesPath
             Arity = argCount;
         }
 
-        public int? Arity {get;}
+        public int? Arity { get; }
 
         public abstract bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue element);
-    };  
+    };
 
     sealed class AbsFunction : BaseFunction
     {
@@ -93,9 +93,9 @@ namespace JsonCons.JmesPath
         {
         }
 
-        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result) 
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg = args[0];
 
@@ -134,7 +134,7 @@ namespace JsonCons.JmesPath
 
         public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             if (arg0.Type != JmesPathType.Array || arg0.GetArrayLength() == 0)
@@ -155,12 +155,12 @@ namespace JsonCons.JmesPath
 
             if (sum.TryGetDecimal(out decVal))
             {
-                result = new DecimalValue(decVal/arg0.GetArrayLength());
+                result = new DecimalValue(decVal / arg0.GetArrayLength());
                 return true;
             }
             else if (sum.TryGetDouble(out dblVal))
             {
-                result = new DoubleValue(dblVal/arg0.GetArrayLength());
+                result = new DoubleValue(dblVal / arg0.GetArrayLength());
                 return true;
             }
             else
@@ -183,10 +183,10 @@ namespace JsonCons.JmesPath
         {
         }
 
-        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, 
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
                                          out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var val = args[0];
             if (val.Type != JmesPathType.Number)
@@ -228,10 +228,10 @@ namespace JsonCons.JmesPath
         {
         }
 
-        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, 
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
                                          out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             var arg1 = args[1];
@@ -252,30 +252,30 @@ namespace JsonCons.JmesPath
                     result = JsonConstants.False;
                     return true;
                 case JmesPathType.String:
-                {
-                    if (arg1.Type != JmesPathType.String)
+                    {
+                        if (arg1.Type != JmesPathType.String)
+                        {
+                            result = JsonConstants.Null;
+                            return false;
+                        }
+                        var s0 = arg0.GetString();
+                        var s1 = arg1.GetString();
+                        if (s0.Contains(s1))
+                        {
+                            result = JsonConstants.True;
+                            return true;
+                        }
+                        else
+                        {
+                            result = JsonConstants.False;
+                            return true;
+                        }
+                    }
+                default:
                     {
                         result = JsonConstants.Null;
                         return false;
                     }
-                    var s0 = arg0.GetString();
-                    var s1 = arg1.GetString();
-                    if (s0.Contains(s1))
-                    {
-                        result = JsonConstants.True;
-                        return true;
-                    }
-                    else
-                    {
-                        result = JsonConstants.False;
-                        return true;
-                    }
-                }
-                default:
-                {
-                    result = JsonConstants.Null;
-                    return false;
-                }
             }
         }
 
@@ -292,10 +292,10 @@ namespace JsonCons.JmesPath
         {
         }
 
-        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, 
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
                                          out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             var arg1 = args[1];
@@ -333,10 +333,10 @@ namespace JsonCons.JmesPath
         {
         }
 
-        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, 
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
                                          out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var val = args[0];
             if (val.Type != JmesPathType.Number)
@@ -380,14 +380,14 @@ namespace JsonCons.JmesPath
 
         public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             var arg1 = args[1];
 
             if (!(arg0.Type == JmesPathType.String && args[1].Type == JmesPathType.Array))
             {
-                result =  JsonConstants.Null;
+                result = JsonConstants.Null;
                 return false;
             }
 
@@ -397,7 +397,7 @@ namespace JsonCons.JmesPath
             {
                 if (j.Type != JmesPathType.String)
                 {
-                    result =  JsonConstants.Null;
+                    result = JsonConstants.Null;
                     return false;
                 }
                 if (buf.Length != 0)
@@ -424,10 +424,10 @@ namespace JsonCons.JmesPath
         {
         }
 
-        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, 
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
                                          out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             if (arg0.Type != JmesPathType.Object)
@@ -459,39 +459,39 @@ namespace JsonCons.JmesPath
         {
         }
 
-        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, 
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
                                          out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
 
             switch (arg0.Type)
             {
                 case JmesPathType.Object:
-                {
-                    int count = 0;
-                    foreach (var item in arg0.EnumerateObject())
                     {
-                        ++count;
+                        int count = 0;
+                        foreach (var item in arg0.EnumerateObject())
+                        {
+                            ++count;
+                        }
+                        result = new DecimalValue(new Decimal(count));
+                        return true;
                     }
-                    result = new DecimalValue(new Decimal(count));
-                    return true;
-                }
                 case JmesPathType.Array:
                     result = new DecimalValue(new Decimal(arg0.GetArrayLength()));
                     return true;
                 case JmesPathType.String:
-                {
-                    byte[] bytes = Encoding.UTF32.GetBytes(arg0.GetString().ToCharArray());
-                    result = new DecimalValue(new Decimal(bytes.Length/4));
-                    return true;
-                }
+                    {
+                        byte[] bytes = Encoding.UTF32.GetBytes(arg0.GetString().ToCharArray());
+                        result = new DecimalValue(new Decimal(bytes.Length / 4));
+                        return true;
+                    }
                 default:
-                {
-                    result = JsonConstants.Null;
-                    return false;
-                }
+                    {
+                        result = JsonConstants.Null;
+                        return false;
+                    }
             }
         }
 
@@ -508,10 +508,10 @@ namespace JsonCons.JmesPath
         {
         }
 
-        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, 
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
                                          out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             if (arg0.Type != JmesPathType.Array)
@@ -542,7 +542,7 @@ namespace JsonCons.JmesPath
                     return false;
                 }
                 IValue value;
-                if (!greater.TryEvaluate(arg0[i],arg0[index], out value))
+                if (!greater.TryEvaluate(arg0[i], arg0[index], out value))
                 {
                     result = JsonConstants.Null;
                     return false;
@@ -572,7 +572,7 @@ namespace JsonCons.JmesPath
 
         public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             if (!(args[0].Type == JmesPathType.Array && args[1].Type == JmesPathType.Expression))
             {
@@ -627,7 +627,7 @@ namespace JsonCons.JmesPath
                     result = JsonConstants.Null;
                     return false;
                 }
-                if (value.Type == JmesPathType.True )
+                if (value.Type == JmesPathType.True)
                 {
                     key1 = key2;
                     index = i;
@@ -651,10 +651,10 @@ namespace JsonCons.JmesPath
         {
         }
 
-        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, 
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
                                          out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             if (arg0.Type != JmesPathType.Array)
@@ -685,12 +685,12 @@ namespace JsonCons.JmesPath
                     return false;
                 }
                 IValue value;
-                if (!less.TryEvaluate(arg0[i],arg0[index], out value))
+                if (!less.TryEvaluate(arg0[i], arg0[index], out value))
                 {
                     result = JsonConstants.Null;
                     return false;
                 }
-                if (value.Type == JmesPathType.True )
+                if (value.Type == JmesPathType.True)
                 {
                     index = i;
                 }
@@ -733,7 +733,7 @@ namespace JsonCons.JmesPath
                 return true;
             }
 
-            var dict = new Dictionary<string,IValue>();
+            var dict = new Dictionary<string, IValue>();
             for (int i = 0; i < args.Count; ++i)
             {
                 var argi = args[i];
@@ -744,10 +744,10 @@ namespace JsonCons.JmesPath
                 }
                 foreach (var item in argi.EnumerateObject())
                 {
-                    if (!dict.TryAdd(item.Name,item.Value))
+                    if (!dict.TryAdd(item.Name, item.Value))
                     {
                         dict.Remove(item.Name);
-                        dict.Add(item.Name,item.Value);
+                        dict.Add(item.Name, item.Value);
                     }
                 }
             }
@@ -798,36 +798,36 @@ namespace JsonCons.JmesPath
 
         public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             switch (arg0.Type)
             {
                 case JmesPathType.String:
-                {
-                    result = new StringValue(string.Join("", GraphemeClusters(arg0.GetString()).Reverse().ToArray()));
-                    return true;
-                }
-                case JmesPathType.Array:
-                {
-                    var list = new List<IValue>();
-                    for (int i = arg0.GetArrayLength()-1; i >= 0; --i)
                     {
-                        list.Add(arg0[i]);
+                        result = new StringValue(string.Join("", GraphemeClusters(arg0.GetString()).Reverse().ToArray()));
+                        return true;
                     }
-                    result = new ArrayValue(list);
-                    return true;
-                }
+                case JmesPathType.Array:
+                    {
+                        var list = new List<IValue>();
+                        for (int i = arg0.GetArrayLength() - 1; i >= 0; --i)
+                        {
+                            list.Add(arg0[i]);
+                        }
+                        result = new ArrayValue(list);
+                        return true;
+                    }
                 default:
                     result = JsonConstants.Null;
                     return false;
             }
         }
 
-        private static IEnumerable<string> GraphemeClusters(string s) 
+        private static IEnumerable<string> GraphemeClusters(string s)
         {
             var enumerator = StringInfo.GetTextElementEnumerator(s);
-            while(enumerator.MoveNext()) 
+            while (enumerator.MoveNext())
             {
                 yield return (string)enumerator.Current;
             }
@@ -848,7 +848,7 @@ namespace JsonCons.JmesPath
 
         public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             if (!(args[0].Type == JmesPathType.Expression && args[1].Type == JmesPathType.Array))
             {
@@ -890,7 +890,7 @@ namespace JsonCons.JmesPath
 
         public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             if (!(args[0].Type == JmesPathType.Array && args[1].Type == JmesPathType.Expression))
             {
@@ -945,7 +945,7 @@ namespace JsonCons.JmesPath
                     result = JsonConstants.Null;
                     return false;
                 }
-                if (value.Type == JmesPathType.True )
+                if (value.Type == JmesPathType.True)
                 {
                     key1 = key2;
                     index = i;
@@ -971,7 +971,7 @@ namespace JsonCons.JmesPath
 
         public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             if (arg0.Type != JmesPathType.Array)
@@ -1028,7 +1028,7 @@ namespace JsonCons.JmesPath
 
         public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             if (!(args[0].Type == JmesPathType.Array && args[1].Type == JmesPathType.Expression))
             {
@@ -1076,10 +1076,10 @@ namespace JsonCons.JmesPath
         {
         }
 
-        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, 
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
                                          out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             var arg1 = args[1];
@@ -1118,10 +1118,10 @@ namespace JsonCons.JmesPath
         {
         }
 
-        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, 
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
                                          out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             if (arg0.Type != JmesPathType.Array)
@@ -1152,7 +1152,7 @@ namespace JsonCons.JmesPath
             }
             if (success)
             {
-                result = new DecimalValue(decSum); 
+                result = new DecimalValue(decSum);
                 return true;
             }
             else
@@ -1168,7 +1168,7 @@ namespace JsonCons.JmesPath
                     }
                     dblSum += dbl;
                 }
-                result = new DoubleValue(dblSum); 
+                result = new DoubleValue(dblSum);
                 return true;
             }
         }
@@ -1176,6 +1176,72 @@ namespace JsonCons.JmesPath
         public override string ToString()
         {
             return "sum";
+        }
+    }
+
+    sealed class MatchFunction : BaseFunction
+    {
+        internal static MatchFunction Instance { get; } = new MatchFunction();
+
+        internal MatchFunction()
+            : base(2)
+        {
+        }
+
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
+                                         out IValue result)
+        {
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
+
+            var arg0 = args[0];
+            var arg1 = args[1];
+
+            switch (arg0.Type)
+            {
+                case JmesPathType.Array:
+                    foreach (var item in arg0.EnumerateArray())
+                    {
+                        var s0 = item.GetString();
+                        var s1 = arg1.GetString();
+                        if (Regex.IsMatch(s0, s1))
+                        {
+                            result = JsonConstants.True;
+                            return true;
+                        }
+                    }
+                    result = JsonConstants.False;
+                    return true;
+                case JmesPathType.String:
+                    {
+                        if (arg1.Type != JmesPathType.String)
+                        {
+                            result = JsonConstants.Null;
+                            return false;
+                        }
+                        var s0 = arg0.GetString();
+                        var s1 = arg1.GetString();
+                        if (Regex.IsMatch(s0, s1))
+                        {
+                            result = JsonConstants.True;
+                            return true;
+                        }
+                        else
+                        {
+                            result = JsonConstants.False;
+                            return true;
+                        }
+                    }
+                default:
+                    {
+                        result = JsonConstants.Null;
+                        return false;
+                    }
+            }
+        }
+
+        public override string ToString()
+        {
+            return "match";
         }
     }
 
@@ -1188,7 +1254,7 @@ namespace JsonCons.JmesPath
 
         public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             if (arg0.Type == JmesPathType.Array)
@@ -1218,10 +1284,10 @@ namespace JsonCons.JmesPath
         {
         }
 
-        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, 
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
                                          out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             switch (arg0.Type)
@@ -1230,26 +1296,26 @@ namespace JsonCons.JmesPath
                     result = arg0;
                     return true;
                 case JmesPathType.String:
-                {
-                    var s = arg0.GetString();
-                    Decimal dec;
-                    double dbl;
-                    if (Decimal.TryParse(s, out dec))
                     {
-                        result = new DecimalValue(dec);
-                        return true;
+                        var s = arg0.GetString();
+                        Decimal dec;
+                        double dbl;
+                        if (Decimal.TryParse(s, out dec))
+                        {
+                            result = new DecimalValue(dec);
+                            return true;
+                        }
+                        else if (Double.TryParse(s, out dbl))
+                        {
+                            result = new DoubleValue(dbl);
+                            return true;
+                        }
+                        else
+                        {
+                            result = JsonConstants.Null;
+                            return false;
+                        }
                     }
-                    else if (Double.TryParse(s, out dbl))
-                    {
-                        result = new DoubleValue(dbl);
-                        return true;
-                    }
-                    else
-                    {
-                        result = JsonConstants.Null;
-                        return false;
-                    }
-                }
                 default:
                     result = JsonConstants.Null;
                     return false;
@@ -1270,7 +1336,7 @@ namespace JsonCons.JmesPath
 
         public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             if (args[0].Type == JmesPathType.Expression)
             {
@@ -1308,7 +1374,7 @@ namespace JsonCons.JmesPath
 
         public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
             if (arg0.Type != JmesPathType.Object)
@@ -1342,7 +1408,7 @@ namespace JsonCons.JmesPath
 
         public override bool TryEvaluate(DynamicResources resources, IList<IValue> args, out IValue result)
         {
-            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value)                   ;
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
 
             var arg0 = args[0];
 
@@ -1379,11 +1445,11 @@ namespace JsonCons.JmesPath
         }
     }
 
-    sealed class BuiltInFunctions 
+    sealed class BuiltInFunctions
     {
-        internal static BuiltInFunctions Instance {get;} = new BuiltInFunctions();
+        internal static BuiltInFunctions Instance { get; } = new BuiltInFunctions();
 
-        readonly Dictionary<string,IFunction> _functions = new Dictionary<string, IFunction>(); 
+        readonly Dictionary<string, IFunction> _functions = new Dictionary<string, IFunction>();
 
         internal BuiltInFunctions()
         {
@@ -1391,6 +1457,7 @@ namespace JsonCons.JmesPath
             _functions.Add("avg", new AvgFunction());
             _functions.Add("ceil", new CeilFunction());
             _functions.Add("contains", new ContainsFunction());
+            _functions.Add("match", new MatchFunction());
             _functions.Add("ends_with", new EndsWithFunction());
             _functions.Add("floor", new FloorFunction());
             _functions.Add("join", new JoinFunction());
