@@ -1245,6 +1245,88 @@ namespace JsonCons.JmesPath
         }
     }
 
+    sealed class HasAllBitsCompareFunction : BaseFunction
+    {
+        internal static HasAllBitsCompareFunction Instance { get; } = new HasAllBitsCompareFunction();
+
+        internal HasAllBitsCompareFunction()
+            : base(2)
+        {
+        }
+
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
+                                         out IValue result)
+        {
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
+
+            if (args[0].Type != JmesPathType.Number || !args[0].TryGetDouble(out double dbl0Val))
+            {
+                result = JsonConstants.Null;
+                return false;
+            }
+            if (args[1].Type != JmesPathType.Number || !args[1].TryGetDouble(out double dbl1Val))
+            {
+                result = JsonConstants.Null;
+                return false;
+            }
+
+            long value = Convert.ToInt64(dbl0Val);
+            long mask = Convert.ToInt64(dbl1Val);
+
+            // bool hasAny = (value & mask) != 0;
+            bool hasAll = (value & mask) == mask;
+
+            result = hasAll ? JsonConstants.True : JsonConstants.False;
+            return true;
+        }
+
+        public override string ToString()
+        {
+            return "hasallbits";
+        }
+    }
+
+    sealed class HasbitCompareFunction : BaseFunction
+    {
+        internal static HasbitCompareFunction Instance { get; } = new HasbitCompareFunction();
+
+        internal HasbitCompareFunction()
+            : base(2)
+        {
+        }
+
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
+                                         out IValue result)
+        {
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
+
+            if (args[0].Type != JmesPathType.Number || !args[0].TryGetDouble(out double dbl0Val))
+            {
+                result = JsonConstants.Null;
+                return false;
+            }
+            if (args[1].Type != JmesPathType.Number || !args[1].TryGetDouble(out double dbl1Val))
+            {
+                result = JsonConstants.Null;
+                return false;
+            }
+
+            long value = Convert.ToInt64(dbl0Val);
+            long mask = Convert.ToInt64(dbl1Val);
+
+            bool hasAny = (value & mask) != 0;
+            // bool hasAll = (value & mask) == mask;
+
+            result = hasAny ? JsonConstants.True : JsonConstants.False;
+            return true;
+        }
+
+        public override string ToString()
+        {
+            return "hasbit";
+        }
+    }
+
     sealed class ToArrayFunction : BaseFunction
     {
         internal ToArrayFunction()
@@ -1458,6 +1540,8 @@ namespace JsonCons.JmesPath
             _functions.Add("ceil", new CeilFunction());
             _functions.Add("contains", new ContainsFunction());
             _functions.Add("match", new MatchFunction());
+            _functions.Add("hasbit", new HasbitCompareFunction());
+            _functions.Add("hasallbits", new HasAllBitsCompareFunction());
             _functions.Add("ends_with", new EndsWithFunction());
             _functions.Add("floor", new FloorFunction());
             _functions.Add("join", new JoinFunction());

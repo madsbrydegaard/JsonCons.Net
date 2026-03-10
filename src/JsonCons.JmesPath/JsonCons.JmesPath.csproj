@@ -20,7 +20,7 @@ System.Text.Json namespace with support for JMESPath. It supports transforming a
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>C:\Users\danie\source\repos\Jsoncons.Net\src\JsonCons.JmesPath\JsonCons.JmesPath.xml</DocumentationFile>
+    <DocumentationFile>.\JsonCons.JmesPath.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
