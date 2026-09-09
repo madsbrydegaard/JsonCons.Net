@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -1179,6 +1180,124 @@ namespace JsonCons.JmesPath
         }
     }
 
+    sealed class InCidrFunction : BaseFunction
+    {
+        internal static InCidrFunction Instance { get; } = new InCidrFunction();
+
+        internal InCidrFunction()
+            : base(2)
+        {
+        }
+
+        public override bool TryEvaluate(DynamicResources resources, IList<IValue> args,
+                                         out IValue result)
+        {
+            Debug.Assert(this.Arity.HasValue && args.Count == this.Arity!.Value);
+
+            if (args[0].Type != JmesPathType.String || args[1].Type != JmesPathType.String)
+            {
+                result = JsonConstants.Null;
+                return false;
+            }
+
+            string cidr = args[0].GetString();
+            string ip = args[1].GetString();
+
+            if (!TryEvaluate(cidr, ip, out bool containsAddress))
+            {
+                result = JsonConstants.False;
+                return true;
+            }
+
+            result = containsAddress ? JsonConstants.True : JsonConstants.False;
+            return true;
+        }
+
+        internal static bool TryEvaluate(string cidr, string ipAddress, out bool containsAddress)
+        {
+            containsAddress = false;
+
+            if (string.IsNullOrWhiteSpace(cidr) || string.IsNullOrWhiteSpace(ipAddress))
+            {
+                return false;
+            }
+
+            string[] cidrParts = cidr.Split('/', 2, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            if (cidrParts.Length != 2 || !int.TryParse(cidrParts[1], out int prefixLength) || prefixLength < 0)
+            {
+                return false;
+            }
+
+            if (!IPAddress.TryParse(cidrParts[0], out IPAddress? networkAddress) || !IPAddress.TryParse(ipAddress, out IPAddress? ip))
+            {
+                return false;
+            }
+
+            if (networkAddress.AddressFamily != ip.AddressFamily)
+            {
+                return false;
+            }
+
+            if ((networkAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && prefixLength > 32) ||
+                (networkAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 && prefixLength > 128))
+            {
+                return false;
+            }
+
+            byte[] networkBytes = MaskNetworkAddress(networkAddress.GetAddressBytes(), prefixLength);
+            byte[] ipBytes = ip.GetAddressBytes();
+            int fullBytes = prefixLength / 8;
+            int remainingBits = prefixLength % 8;
+
+            for (int i = 0; i < fullBytes; i++)
+            {
+                if (ipBytes[i] != networkBytes[i])
+                {
+                    return true;
+                }
+            }
+
+            if (remainingBits > 0)
+            {
+                int shift = 8 - remainingBits;
+                byte mask = (byte)(0xFF << shift);
+                if ((ipBytes[fullBytes] & mask) != (networkBytes[fullBytes] & mask))
+                {
+                    return true;
+                }
+            }
+
+            containsAddress = true;
+            return true;
+        }
+
+        private static byte[] MaskNetworkAddress(byte[] address, int prefixLength)
+        {
+            byte[] masked = (byte[])address.Clone();
+            int fullBytes = prefixLength / 8;
+            int remainingBits = prefixLength % 8;
+
+            for (int i = fullBytes; i < masked.Length; i++)
+            {
+                masked[i] = 0;
+            }
+
+            if (remainingBits > 0)
+            {
+                int shift = 8 - remainingBits;
+                byte mask = (byte)(0xFF << shift);
+                masked[fullBytes] = (byte)(masked[fullBytes] & mask);
+            }
+
+            return masked;
+        }
+
+        public override string ToString()
+        {
+            return "in_cidr";
+        }
+    }
+
     sealed class MatchFunction : BaseFunction
     {
         internal static MatchFunction Instance { get; } = new MatchFunction();
@@ -1539,6 +1658,8 @@ namespace JsonCons.JmesPath
             _functions.Add("avg", new AvgFunction());
             _functions.Add("ceil", new CeilFunction());
             _functions.Add("contains", new ContainsFunction());
+            _functions.Add("in_cidr", new InCidrFunction());
+            _functions.Add("cidr_contains", new InCidrFunction());
             _functions.Add("match", new MatchFunction());
             _functions.Add("hasbit", new HasbitCompareFunction());
             _functions.Add("hasallbits", new HasAllBitsCompareFunction());

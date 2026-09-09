@@ -132,6 +132,18 @@
       "result": false
     },
     {
+      "expression": "in_cidr('10.0.0.0/8', '10.0.0.5')",
+      "result": true
+    },
+    {
+      "expression": "in_cidr('10.0.0.0/8', '11.0.0.5')",
+      "result": false
+    },
+    {
+      "expression": "in_cidr('10.0.0.0/8', `123`)",
+      "error": "invalid-type"
+    },
+    {
       "expression": "ends_with(str, 'r')",
       "result": true
     },
